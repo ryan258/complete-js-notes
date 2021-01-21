@@ -61,6 +61,32 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+// it's best practice to pass the data into a function instead of having a function work with a global variable.
+// template literals are amazing for creating html templates
+const displayMovements = function (movements) {
+  // clear out container contents
+  containerMovements.innerHTML = '';
+
+  movements.forEach(function (mov, i) {
+    // if we're going to need it twice, combine it into 1 variable
+    const type = mov > 0 ? 'deposit' : 'withdrawal';
+
+    const html = `
+    <div class="movements__row">
+      <div class="movements__type movements__type--${type}">${
+      i + 1
+    } ${type}</div>
+      <div class="movements__value">${mov}</div>
+    </div>
+    `;
+
+    // use .insertAdjecentHTML('position', 'html we want to insert') to place it on the screen inside .movements
+
+    containerMovements.insertAdjacentHTML('afterbegin', html);
+  });
+};
+displayMovements(account1.movements);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
