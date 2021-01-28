@@ -774,3 +774,40 @@ console.log(account);*/
 // console.log(movements.some(deposit));
 // console.log(movements.every(deposit));
 // console.log(movements.filter(deposit));
+
+///////////////////////////////////////
+// (ES2019) .flat() and .flatMap()
+// - arr.flat(n) - only flattens arrays one level deep by default
+//              - n = levels deep
+// using a map first and then flattening it out is a pretty common operation so we have flatmap!
+// - arr.
+// -- flatmap combines a map and a flat method to just one method to improve performance
+
+// const arr = [[1, 2, 3], [4, 5, 6], 7, 8];
+// console.log(arr.flat()); // flattens out a single array of the values w/o nested arrays
+
+// const arrDeep = [[[1, 2], 3], [4, [5, 6]], 7, 8];
+// console.log(arrDeep.flat(2));
+
+// example - lets get all the movements from all the accounts
+// const accountMovements = accounts.map(acc => acc.movements);
+// console.log(accountMovements.flat());
+// const allMovements = accountMovements.flat();
+// console.log(allMovements);
+// const overallBalance = allMovements.reduce((acc, mov) => acc + mov, 0);
+// console.log('Overall Balance: $' + overallBalance);
+
+// flat
+// const chainedOverallBalance = accounts
+//   .map(acc => acc.movements)
+//   .flat()
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(chainedOverallBalance);
+// using a map first and then flattening it out is a pretty common operation
+
+// flatMap - it's basically a map method that flattens the result
+//        - .flatMap() only goes 1 level deep and we cannot change it
+// const chainedOverallBalance2 = accounts
+//   .flatMap(acc => acc.movements)
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(chainedOverallBalance2);
