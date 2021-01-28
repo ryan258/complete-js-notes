@@ -170,7 +170,7 @@ btnLogin.addEventListener('click', e => {
     // update UI
     updateUI(currentAccount);
 
-    console.log('you hacked the grid!');
+    // console.log('you hacked the grid!');
   }
 });
 
@@ -198,6 +198,44 @@ btnTransfer.addEventListener('click', e => {
     // Update the UI
     updateUI(currentAccount);
   }
+});
+
+// bank rule: only grants a loan if there is at least 1 deposit worth 10% of the requested loan amount
+btnLoan.addEventListener('click', e => {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    console.log('loan approved!');
+    // add movement
+    currentAccount.movements.push(amount);
+
+    updateUI(currentAccount);
+    inputLoanAmount.value = '';
+  }
+});
+
+btnClose.addEventListener('click', e => {
+  e.preventDefault();
+  if (
+    currentAccount.username === inputCloseUsername.value &&
+    currentAccount.pin === Number(inputClosePin.value)
+  ) {
+    // console.log('deleting!');
+    const accToDelete = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+    console.log(accToDelete);
+    // delete account
+    accounts.splice(accToDelete, 1);
+    console.log(accounts);
+
+    // hide UI
+    containerApp.style.opacity = 0;
+  }
+  // clear close account inputs
+  inputCloseUsername.value = inputClosePin.value = '';
 });
 
 ///////////////////////////////////////
@@ -676,7 +714,7 @@ console.log(avg1, avg2);
 */
 
 ///////////////////////////////////////
-// The .find() METHOD ---- returns an element of the array, unlike .filter() which returns a whole array
+// (ES6) The .find() METHOD ---- returns an element of the array, unlike .filter() which returns a whole array
 //                        returns undefined if there are no
 // - retrieve one element of an array, based on a condition
 // - will return the FIRST item in the array that satisfies this condition
@@ -700,3 +738,39 @@ console.log(accounts);
 const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 // so we can search an array for an object that contains a certain property that we know
 console.log(account);*/
+
+///////////////////////////////////////
+// (ES6) The .findIndex() METHOD --- works like .find() but returns the index of the found element instead of the element itself
+// we'll do close an account feature, remove it from the accounts array, we'll use the splice method for this, which need that index
+
+///////////////////////////////////////
+// .some() & .every()
+// - while there's a .includes() method, it only checks for a simple equality, .some() lets us be more dynamic in our criteria
+// - if you hear ANY in the description, it's usually a good case for the .some() method
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// EQUALITY
+// .includes() - test if array includes a certain value
+// -- but we can only really test for equality
+// .every() is like .some() but tests that every item in the array meets a certain condition
+// console.log(movements.includes(-130)); // true
+
+// CONDITION
+// .some() method
+// console.log(movements.some(mov => mov === -130)); // true, same as the .includes() example
+// - tests for condition instead of equality
+// -example: are there any deposits on this account?
+// const anyDeposits = movements.some(mov => mov > 0);
+// console.log(`Are there deposits? ${anyDeposits ? 'yes!' : 'nope...'}`);
+
+// .every() method
+// - like .some() but tests that every item in the array meets a certain condition
+// console.log(movements.every(mov => mov > 0)); // false
+// console.log(account4.movements.every(mov => mov > 0)); // true (as it has only deposits)
+
+// Separate callback - then we could use this all over the place where there's a callback condition
+//                   - better for the DRY principle
+// const deposit = mov => mov > 0;
+// console.log(movements.some(deposit));
+// console.log(movements.every(deposit));
+// console.log(movements.filter(deposit));
