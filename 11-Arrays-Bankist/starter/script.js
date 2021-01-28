@@ -862,3 +862,180 @@ console.log(account);*/
 // });
 // movements.sort((a, b) => b - a); // if b is less than a it'll be a negative number
 // console.log(movements); // [3000, 1300, 450, 200, 70, -130, -400, -650]
+
+///////////////////////////////////////
+// CREATING AND FILLING ARRAYS
+/*
+// no more writing arrays out by hand literally
+// like
+console.log([1, 2, 3, 4, 5, 6, 7]);
+console.log(new Array(1, 2, 3, 4, 5, 6, 7));
+
+// create an array programmatically
+// whenever we only pass 1 argument to array it creates that many
+const x = new Array(7); // array with 7 empty indexes
+console.log(x);
+// we can't really use this x array for anything
+x.map(() => 5); // won't fill it up
+console.log(x); // still empty, nothing happened
+
+// but there is 1 thing that we can do!
+
+// EMPTY ARRAYS + .FILL()
+// arr.fill(a[, b, c])
+// - a = spacefiller
+// - b = start position
+// - c = position to stop at
+// - fills entire array with specific value
+// - MUTATES
+// x.fill(6);
+// console.log(x); // [6, 6, 6, 6, 6, 6]
+// - like the slice method, we can also tell it where we want to start to fill
+x.fill(6, 2, 4);
+console.log(x); // first two positions are empty then 2 positions have 6s, then the rest of the positions are empty
+
+// we can also overwrite existing arrays
+const arr = [1, 2, 3, 4, 5, 6, 7];
+
+arr.fill(23, 4, 6);
+console.log(arr); // [1, 2, 3, 4, 23, 23, 7]
+
+// Array.from({length: a}, mapFunc(currEl, index)) - nicer that the new Array(), .fill approach
+// use .from on the Array constructor, like it's the same as the new Array
+const y = Array.from({ length: 7 }, () => 1);
+console.log(y); // [1, 1, 1, 1, 1, 1, 1]
+
+const z = Array.from({ length: 7 }, (_, i) => i + 1);
+console.log(`Z: ${z}`); // z: 1, 2, 3, 4, 5, 6, 7
+
+// 100 random dice rolls
+const diceRolls = Array.from({ length: 100 }, () =>
+  Math.ceil(Math.random() * 6)
+);
+
+console.log(diceRolls);
+
+// used to create arrays from array-like, structures
+// like string, maps or sets... node list (which lacks a lot of array methods)
+// we can create arrays FROM other things
+
+// ... querySelectorAll ... // which returns a node list!
+
+// labelBalance.addEventListener('click', () => {
+//   const movementsUI = Array.from(
+//     document.querySelectorAll('.movements__value')
+//   );
+//   console.log(movementsUI.map(el => Number(el.textContent.replace('€', ''))));
+// });
+
+labelBalance.addEventListener('click', () => {
+  // method #1 - winner
+  const movementsUI = Array.from(
+    // this makes that node list into an array
+    document.querySelectorAll('.movements__value'), // this gets us a node list
+    el => Number(el.textContent.replace('€', '')) // we get to use a callback .map()ish function to iterate over our new array from the node list
+  );
+  console.log(movementsUI); // booya, we list out our array of transactions
+
+  // method #2
+  const movementsUI2 = [...document.querySelectorAll('.movements__value')]; // bet then we'd have to do the mapping seperately...
+  console.log(movementsUI2);
+});
+*/
+
+///////////////////////////////////////
+// Coding Challenge #4
+
+/* 
+Julia and Kate are still studying dogs, and this time they are studying if dogs are eating too much or too little.
+Eating too much means the dog's current food portion is larger than the recommended portion, and eating too little is the opposite.
+Eating an okay amount means the dog's current food portion is within a range 10% above and 10% below the recommended portion (see hint).*/
+
+//  food portion = 10% less than recommended to 10% more than recommended
+const dogs = [
+  { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
+  { weight: 8, curFood: 200, owners: ['Matilda'] },
+  { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
+  { weight: 32, curFood: 340, owners: ['Michael'] },
+];
+
+// // CREATE USERNAMES
+// const createUsernames = function (accs) {
+//   // we're going to use forEach to change the original accounts array with calc'd data, making a side effect on purpose and not returning anything!
+//   // SIDE EFFECTS - do some work, without returning anything
+//   accs.forEach(function (acc) {
+//     // create a new property on each of the objects
+//     acc.username = acc.owner
+//       .toLowerCase()
+//       .split(' ')
+//       .map(name => name[0])
+//       .join('');
+//   });
+// };
+
+/*1. Loop over the array containing dog objects, and for each dog, calculate the recommended food portion and add it to the object as a new property. Do NOT create a new array, simply loop over the array. Forumla: recommendedFood = weight ** 0.75 * 28. 
+(The result is in grams of food, and the weight needs to be in kg)*/
+dogs.forEach(dog => {
+  dog.recommendedFood = Math.trunc(dog.weight ** 0.75 * 28);
+  console.log(dog);
+});
+
+/*2. Find Sarah's dog and log to the console whether it's eating too much or too little. HINT: Some dogs have multiple owners, so you first need to find Sarah in the owners array, and so this one is a bit tricky (on purpose) 🤓*/
+
+const dogOfSarah = dogs.find(dog => dog.owners.includes('Sarah'));
+console.log(dogOfSarah);
+console.log(
+  `Sarah's dog is eating ${
+    dogOfSarah.curFood > dogOfSarah.recommendedFood
+      ? 'too much'
+      : dogOfSarah.curFood > dogOfSarah.recommendedFood
+      ? 'too little'
+      : 'the right amount'
+  }`
+);
+
+/*3. Create an array containing all owners of dogs who eat too much ('ownersEatTooMuch') and an array with all owners of dogs who eat too little ('ownersEatTooLittle').*/
+const ownersEatTooMuch = dogs
+  .filter(dog => dog.curFood > dog.recommendedFood * 1.1)
+  .flatMap(dog => dog.owners);
+console.log(ownersEatTooMuch);
+
+const ownersEatTooLittle = [
+  ...dogs
+    .filter(dog => dog.curFood < dog.recommendedFood * 0.9)
+    .flatMap(dog => dog.owners),
+];
+console.log(ownersEatTooLittle);
+
+/*4. Log a string to the console for each array created in 3., like this: "Matilda and Alice and Bob's dogs eat too much!" and "Sarah and John and Michael's dogs eat too little!"*/
+console.log(`${ownersEatTooMuch.join(' and ')}'s dogs eat too much!`);
+console.log(
+  `${ownersEatTooLittle.join(' and ')}'s dogs eat too little! Monsters...`
+);
+
+/*5. Log to the console whether there is any dog eating EXACTLY the amount of food that is recommended (just true or false)*/
+console.log(dogs.some(dog => dog.curFood == dog.recommendedFood));
+
+/*6. Log to the console whether there is any dog eating an OKAY amount of food (just true or false)*/
+console.log(
+  dogs.some(
+    dog =>
+      dog.curFood < dog.recommendedFood * 1.1 &&
+      dog.curFood > dog.recommendedFood * 0.9
+  )
+);
+
+/*7. Create an array containing the dogs that are eating an OKAY amount of food (try to reuse the condition used in 6.)*/
+console.log(
+  dogs.filter(
+    dog =>
+      dog.curFood < dog.recommendedFood * 1.1 &&
+      dog.curFood > dog.recommendedFood * 0.9
+  )
+);
+
+/*8. Create a shallow copy of the dogs array and sort it by recommended food portion in an ascending order (keep in mind that the portions are inside the array's objects) */
+console.log(dogs.slice().sort((a, b) => a.recommendedFood - b.recommendedFood));
+
+/*HINT 1: Use many different tools to solve these challenges, you can use the summary lecture to choose between them 😉
+HINT 2: Being within a range 10% above and below the recommended portion means: current > (recommended * 0.90) && current < (recommended * 1.10). Basically, the current portion should be between 90% and 110% of the recommended portion.*/
