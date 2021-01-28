@@ -65,11 +65,13 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // DISPLAY TRANSACTIONS
 // it's best practice to pass the data into a function instead of having a function work with a global variable.
 // template literals are amazing for creating html templates
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   // clear out container contents
   containerMovements.innerHTML = '';
 
-  movements.forEach(function (mov, i) {
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach(function (mov, i) {
     // if we're going to need it twice, combine it into 1 variable
     const type = mov > 0 ? 'deposit' : 'withdrawal';
 
@@ -236,6 +238,14 @@ btnClose.addEventListener('click', e => {
   }
   // clear close account inputs
   inputCloseUsername.value = inputClosePin.value = '';
+});
+
+let sorted = false;
+
+btnSort.addEventListener('click', e => {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
 
 ///////////////////////////////////////
@@ -811,3 +821,44 @@ console.log(account);*/
 //   .flatMap(acc => acc.movements)
 //   .reduce((acc, mov) => acc + mov, 0);
 // console.log(chainedOverallBalance2);
+
+///////////////////////////////////////
+// SORTING ARRAYS
+// - .sort() mutates the original array
+// - IT WILL MUTATE!
+
+// built in JS .sort() - sorts by strings (converts everything to strings, then sorts)
+
+// Strings
+// const owners = ['Ryan', 'Manny', 'Orson', 'Ike'];
+// console.log(owners.sort()); // ["Ike", "Manny", "Orson", "Ryan"]
+// console.log(owners); // we see that it mutates the original array
+
+// Numbers - sorts by first digit, sorts by strings
+// const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+// console.log(movements.sort()); // [-130, -400, -650, 1300, 200, 3000, 450, 70]
+
+// BUT WE CAN PASS IN A SORT CALLBACK FUNCTION
+// - arr.sort((a, b) => {})
+//   - a = the current value
+//   - b = the next value       --- imagine the sort method looping over the array, a,b two consecutive numbers in the array
+// - return < 0, A, B  (keep order)
+// - return > 0, B, A  (switch order)
+// - return 0 - position remains unchanged
+// - don't use sort on mixed types any ways
+
+// (asc) small to large - b, a
+// movements.sort((a, b) => {
+//   if (a > b) return 1;
+//   if (a < b) return -1;
+// });
+// movements.sort((a, b) => a - b); // if a is greater than b it'll be a positive number
+// console.log(movements); // [-650, -400, -130, 70, 200, 450, 1300, 3000]
+
+// (desc) small to large - b, a
+// movements.sort((a, b) => {
+//   if (a > b) return -1;
+//   if (a < b) return 1;
+// });
+// movements.sort((a, b) => b - a); // if b is less than a it'll be a negative number
+// console.log(movements); // [3000, 1300, 450, 200, 70, -130, -400, -650]
