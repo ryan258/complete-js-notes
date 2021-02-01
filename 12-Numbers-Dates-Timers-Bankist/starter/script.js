@@ -492,3 +492,63 @@ console.log(10 / 3); // 3.33333333333
 console.log(10n / 3n); // 3n
 console.log(12 / 3); // 4
 */
+
+/////////////////////////////////////////////////
+// CREATING DATES
+
+// Create a Date - there are 4 ways...
+// - they all use the new Date() constructor function, but they can accept different parameters
+/*
+// Way 1
+const now1 = new Date();
+console.log(now1); // Mon Feb 01 2021 08:50:06 GMT-0600 (Central Standard Time)
+
+// Way 2 - parse the date from a string
+const now2 = new Date('Feb 01 2021 08:47:25');
+console.log(now2); // Mon Feb 01 2021 08:47:25 GMT-0600 (Central Standard Time)
+
+// Way 3 - write a string ourselves - generally not a good idea bc it can be unreliable - but if string is made by JS itself, it should be safe
+const now3 = new Date('December 24, 2015');
+console.log(now3); // Thu Dec 24 2015 00:00:00 GMT-0600 (Central Standard Time)
+
+// let's take a date from our bankist app - Z in a time date means universal time, no time zone nor day light savings
+console.log(new Date(account1.movementsDates[0])); // Mon Nov 18 2019 15:31:17 GMT-0600 (Central Standard Time)
+
+// we can also throw whatever in the constructor - the MONTH is JS is 0 BASED
+console.log(new Date(2037, 10, 19, 15, 23, 5)); // Thu Nov 19 2037 15:23:05 GMT-0600 (Central Standard Time)
+// JS also auto corrects the date
+console.log(new Date(2037, 10, 31)); // Tue Dec 01 2037 00:00:00 GMT-0600 (Central Standard Time)
+// amount of milliseconds since the UNIX time - January 1st, 1970
+console.log(new Date(0)); // Wed Dec 31 1969 18:00:00 GMT-0600 (Central Standard Time)
+// convert from 3 days to milliseconds
+console.log(new Date(3 * 24 * 60 * 60 * 1000)); // Sat Jan 03 1970 18:00:00 GMT-0600 (Central Standard Time)
+// 3 * 24 * 60 * 60 * 1000 = 259200000 - the time stamp
+*/
+// DATES ARE THEIR OWN TYPE OF OBJECT - SO THEY HAVE THEIR OWN SPECIAL METHODS
+// - so we can get or set different components of the string
+
+// Working with dates
+const future = new Date(2037, 10, 19, 15, 23);
+console.log(future); // Thu Nov 19 2037 15:23:00 GMT-0600 (Central Standard Time)
+console.log(future.getFullYear()); //! 2037 - never use .getYear() - always use .getFullYear()
+console.log(future.getMonth()); // 10 - months are 0 based
+console.log(future.getDate()); // 19 - day of the month, yeah, weird
+console.log(future.getDay()); //! 4 - the day of the week (0 is Sunday)
+console.log(future.getHours()); // 15
+console.log(future.getMinutes()); // 23
+console.log(future.getSeconds()); // 0
+
+// get a nicely formatted string
+// - good for converting a date that you want to store somewhere
+console.log(future.toISOString()); // 2037-11-19T21:23:00.000Z
+// get time stamp for the date
+console.log(future.getTime()); // 2142278580000
+// then we can decode it
+console.log(new Date(2142278580000)); // Thu Nov 19 2037 15:23:00 GMT-0600 (Central Standard Time)
+
+// special method to get this very moment - as a timestamp
+console.log(Date.now()); // 1612192933367
+
+// there are also set versions for all these things, and they do auto-correction
+future.setFullYear(2040);
+console.log(future); // Mon Nov 19 2040 15:23:00 GMT-0600 (Central Standard Time)
