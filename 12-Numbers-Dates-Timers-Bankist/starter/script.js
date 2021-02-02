@@ -232,13 +232,43 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 
+const startLogOutTimer = () => {
+  const tick = function () {
+    // in each call, print remaining time to UI
+    const min = String(Math.trunc(time / 60)).padStart(2, '0');
+    const sec = String(time % 60).padStart(2, '0');
+    labelTimer.textContent = `${min}:${sec}`;
+
+    // when 0 seconds, stop timer and log out user
+    if (time === 0) {
+      clearInterval(timer);
+
+      labelWelcome.textContent = `Log in to get started`;
+
+      containerApp.style.opacity = 0;
+    }
+
+    // decrease 1s
+    time--;
+  };
+  // set time to 5 minutes
+  let time = 30;
+
+  // call immediately to get that initial tick without the delay
+  tick();
+  // call timer every following second
+  const timer = setInterval(tick, 1000);
+  // return timer so we can stop any other running process when we log in to another account
+  return timer;
+};
+
 ///////////////////////////////////////
 // Event handlers
-let currentAccount;
+let currentAccount, timer; // allow timer variable to exist between different logins
 // FAKE ALWAYS LOGGED IN
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 100;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -281,11 +311,15 @@ btnLogin.addEventListener('click', function (e) {
       options
     ).format(now);
 
-    // containerApp.style.opacity = 100;
+    containerApp.style.opacity = 100;
 
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
+
+    // Logged In Timer
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
 
     // Update UI
     updateUI(currentAccount);
@@ -316,6 +350,11 @@ btnTransfer.addEventListener('click', function (e) {
 
     // Update UI
     updateUI(currentAccount);
+
+    // Reset logout timer on transfer
+    // ie clear interval, and start it again 🙌
+    clearInterval(timer); // make sure that timer variable is a global variable
+    timer = startLogOutTimer();
   }
 });
 
@@ -325,14 +364,21 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.ceil(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
+    setTimeout(function () {
+      // Add movement
+      currentAccount.movements.push(amount);
 
-    // Add Loan Date
-    currentAccount.movementsDates.push(new Date().toISOString());
+      // Add Loan Date
+      currentAccount.movementsDates.push(new Date().toISOString());
 
-    // Update UI
-    updateUI(currentAccount);
+      // Update UI
+      updateUI(currentAccount);
+
+      // Reset logout timer on loan
+      // ie clear interval, and start it again 🙌
+      clearInterval(timer); // make sure that timer variable is a global variable
+      timer = startLogOutTimer();
+    }, 5000);
   }
   inputLoanAmount.value = '';
 });
@@ -746,3 +792,58 @@ console.log('Syria: ' + new Intl.NumberFormat('ar-SY', options).format(num)); //
 console.log(
   'Browser: ' + new Intl.NumberFormat(navigator.language, options).format(num)
 ); // 1,605.99 mph*/
+
+/////////////////////////////////////////////////
+// TIMERS: SETTIMEOUT AND SETINTERVAL
+
+// setTimeout() - runs just once after a defined time
+// setTimeout(a, b)
+// - a = callback function
+// - b = time (milliseconds) before callback function is called
+// setTimeout calls the function
+// interpreter doesn't stop and wait to call the callback function, it just registers the callback function and delay,..
+// ...and counts time in the background while it continues going through the lines of commands
+// -- this is an example of asynchronous javascript
+
+// let's order a pizza
+// setTimeout(() => {
+//   console.log('knock knock knock, pizza time!!!!! 🍕🍕🍕 ');
+//   console.log(this);
+// }, 3000);
+// but code execution doesn't stop at this point
+// when the interpreter hits setTimeout, it will simply register the callback function to be called later
+// - then the code execution simply continues
+// console.log("where's my pizza!?"); // we see this output before the knocks come ~3 seconds later
+
+// so what if we need to pass some arguments into that callback function? - not so simple because we're not calling the function ourselves!
+// but setTimeout has a way
+// -- all arguments passed after the delay will be arguments to the function
+// const ingredients = ['extra cheese', 'pepperoni', 'spinach'];
+
+// const pizzaTimer = setTimeout(
+//   (ingredient1, ingredient2) => {
+//     console.log(
+//       `knock knock knock! Your ${ingredient1} ${ingredient2} 🍕 is here. It's 🍕 time!`
+//     ); // knock knock knock! Your extra cheese pepperoni 🍕 is here. It's 🍕 time!
+//   },
+//   3000,
+//   ...ingredients
+// );
+// console.log('where the pizza at?');
+// // before the 3 seconds have passed, you can cancel the timeOut
+// if (ingredients.includes('spinach')) clearTimeout(pizzaTimer);
+
+// // setInterval to create a clock in our console
+// // - the callback function runs every time interval
+// setInterval(function () {
+//   // const now = new Date();
+//   const hours = String(new Date().getHours()).padStart(2, '0');
+//   const minutes = String(new Date().getMinutes()).padStart(2, '0');
+//   const seconds = String(new Date().getSeconds()).padStart(2, '0');
+//   console.log(`${hours}:${minutes}:${seconds}`);
+// }, 1000);
+
+// // setInterval() - keeps running forever until we stop it
+
+/////////////////////////////////////////////////
+// TIMERS: IMPLEMENTING A COUNTDOWN TIMER
