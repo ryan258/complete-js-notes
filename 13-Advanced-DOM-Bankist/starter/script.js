@@ -45,6 +45,29 @@ btnScrollTo.addEventListener('click', e => {
 });
 
 ///////////////////////////////////////
+// Page Navigation - common pattern for single page scrolling navigation
+
+//! 1.) add an event listener to a common parent element of all the elements we're interested in
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  e.preventDefault();
+  //! 2.) determine what element originated the event
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+//////  works but inefficient
+// document.querySelectorAll('.nav__link').forEach(function (el) {
+//   el.addEventListener('click', function (e) {
+//     e.preventDefault();
+//     const id = this.getAttribute('href');
+//     console.log(id);
+//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+//   });
+// });
+
+///////////////////////////////////////
 // SELECTING, CREATING, AND DELETING ELEMENTS
 
 // Selecting elements
@@ -355,9 +378,49 @@ document.querySelector('.nav').addEventListener(
 
 ////////////////////////////////////////////////////
 // EVENT DELEGATION: IMPLEMENTING PAGE NAVIGATION
+// - we use the fact that event bubble up, so we put the event listener on a common parent of all the elements we are interested in
 
-// - we're going to add smooth scrolling to our different nav links
 // - SEE TOP OF THE FILE FOR IMPLEMENTATION
+// - we're going to add smooth scrolling to our different nav links
+
+// first solution - but inefficient
+// document.querySelectorAll('.nav__link').forEach(function (el) {
+//   el.addEventListener('click', function (e) {
+//     e.preventDefault();
+//     const id = this.getAttribute('href');
+//     console.log(id);
+//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+//   });
+// });
+
+//! 2nd Page Navigation - common pattern for single page scrolling navigation
+// - when a child of the container is clicked,
+// -- the event is generated
+// -- bubbles up
+// --- then we can catch the event in the common parent element and handle it there
+//     (and we'll also know where the event originated, event.target)
+//! - steps - an IMPORTANT technique
+// -- 1.) add an event listener to a common parent element of all the elements we're interested in
+// -- 2.) determine what element originated the event
+
+/*//! 1.) add an event listener to a common parent element of all the elements we're interested in
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  // console.log(e.target); // we see the element that triggered the event
+  // we usually always want to prevent the default
+  e.preventDefault();
+  //! 2.) determine what element originated the event
+  // Matching Strategy - need to match so we only register events emitted by children we care about
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    // console.log(id);
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  }
+});*/
+
+// another case for event delegation
+// - when we are working with elements that are not yet on the page when the page loads
+//   (like dynamically add buttons) - you can't add eventhandlers to elements that do not yet exist
+// -- but event delegation will give us a way to do just that
 
 ///////////////////////////////////////
 //
