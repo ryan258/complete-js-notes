@@ -57,6 +57,28 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
   }
 });
 
+///////////////////////////////////////
+// Tabbed Component
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+
+tabsContainer.addEventListener('click', e => {
+  const clicked = e.target.closest('.operations__tab');
+
+  if (!clicked) return;
+
+  // remomve active classes
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+
+  // add active classes
+  clicked.classList.add('operations__tab--active');
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
+});
+
 //////  works but inefficient
 // document.querySelectorAll('.nav__link').forEach(function (el) {
 //   el.addEventListener('click', function (e) {
@@ -459,6 +481,42 @@ console.log(h1.nextSibling);
 console.log(h1.parentElement.children);
 [...h1.parentElement.children].forEach(function (el) {
   if (el !== h1) el.style.transform = 'scale(0.5)';
+});*/
+
+///////////////////////////////////////
+// BUILDING A TABBED COMPONENT
+
+/*// Tabbed Component
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+
+// time for event delegation - eventhandler on the parent of the elements we're interested in
+tabsContainer.addEventListener('click', e => {
+  const clicked = e.target.closest('.operations__tab');
+  // console.log(clicked);
+  // when we click on the content we get an error, null
+  // - closest() returns null if it can't find anything
+  // -- so we have to ignore any clicks where the result is null
+  // Guard Clause
+  if (!clicked) return; // <--- this is a "guard clause" - if a condition is matched, return early
+  //                            if clicked exists, continue, //!  modern way to do it
+
+  // remomve active classes
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  // Remove Active Content Area
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+
+  // then add the active class to the one that was clicked
+
+  // Active Tab
+  clicked.classList.add('operations__tab--active');
+
+  // Activate Content Area - with data attribute - "data-tab"
+  // console.log(clicked.dataset.tab);
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
 });*/
 
 ///////////////////////////////////////
