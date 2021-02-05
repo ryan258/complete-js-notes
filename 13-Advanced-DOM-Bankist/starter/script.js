@@ -423,10 +423,43 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
 // -- but event delegation will give us a way to do just that
 
 ///////////////////////////////////////
-//
+// DOM TRAVERSING
+// - walking through the dom, selecting an element based on another - relatively
 
-///////////////////////////////////////
-//
+/*const h1 = document.querySelector('h1');
+
+// Going downwards: child
+console.log(h1.querySelectorAll('.highlight')); // NodeList of all .highlight children in the h1 element - [span.highlight, span.highlight]
+console.log(h1.childNodes); // NOT USED MUCH - gets direct children [NodeList] - includes everything, text, elements, comments, etc
+console.log(h1.children); // HTMLCollection - LIVE collection of HTML elements - only works for DIRECT CHILDREN
+h1.firstElementChild.style.color = 'white'; // the first child element of h1 gets the color style
+h1.lastElementChild.style.color = 'orangered'; // the last child element of h1 gets the color style
+
+// Going upwards: parents
+console.log(h1.parentNode); // direct parent node, works like .children
+console.log(h1.parentElement); // usually the one used - mostly the same because the parent is going to be an element
+//! closest is like the opposite of querySelector
+// - but most of the time we're going to need a parent element that is not a direct parent
+h1.closest('.header').style.background = 'var(--gradient-secondary)'; // find the closest parent element
+//! -- also note how we can use CSS variables in JS!
+// if the closest is the element itself, then that's the one that gets returned
+h1.closest('h1').style.background = 'var(--gradient-primary)'; 
+
+// Going sideways: siblings - we can only access DIRECT siblings (the previous and next one)
+// previous and next elements - WE'LL USE THIS THE MOST
+console.log(h1.previousElementSibling);
+console.log(h1.nextElementSibling);
+
+// previous and next for nodes
+console.log(h1.previousSibling);
+console.log(h1.nextSibling);
+
+// Work with all the sibling elements of an element
+//! Trick: Move up to the parent, and get all children elements - since it's an HTMLCollection we can spread them all into an array and .forEach over them
+console.log(h1.parentElement.children);
+[...h1.parentElement.children].forEach(function (el) {
+  if (el !== h1) el.style.transform = 'scale(0.5)';
+});*/
 
 ///////////////////////////////////////
 //
