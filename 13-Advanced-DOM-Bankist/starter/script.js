@@ -79,15 +79,26 @@ tabsContainer.addEventListener('click', e => {
     .classList.add('operations__content--active');
 });
 
-//////  works but inefficient
-// document.querySelectorAll('.nav__link').forEach(function (el) {
-//   el.addEventListener('click', function (e) {
-//     e.preventDefault();
-//     const id = this.getAttribute('href');
-//     console.log(id);
-//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
-//   });
-// });
+///////////////////////////////////////
+// Menu Fade Animation
+const nav = document.querySelector('.nav');
+
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
+  }
+};
+
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+nav.addEventListener('mouseout', handleHover.bind(1));
 
 ///////////////////////////////////////
 // SELECTING, CREATING, AND DELETING ELEMENTS
@@ -518,6 +529,167 @@ tabsContainer.addEventListener('click', e => {
     .querySelector(`.operations__content--${clicked.dataset.tab}`)
     .classList.add('operations__content--active');
 });*/
+
+/////////////////////////////////////////
+// PASSING ARGUMENTS TO EVENT HANDLERS - a big worka round because an event handler can only to one argument
+// - It's impossible to pass an argument into an event handler function and can only have 1 really argument, the event!
+// - if we want to pass additional values we have to use the THIS keyword
+// - Multiple values would require us to pass them in as an array or an object
+
+// - we'll make it so when you hover over a link in the head, the other links fade out a little
+// LINK NAVIGATION HOVER FADE
+
+// 1ST TAKE
+
+/*const nav = document.querySelector('.nav');
+// mouseenter does not bubble, mouseover bubbles
+// we need the event to actually bubble
+nav.addEventListener('mouseover', function (e) {
+  // no need for closest() because there are no child elements that we could accidently click in the link
+  // - so a simple check is enough
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    // select all the other sibliing links
+    // - note that each nav_link is inside a nav_item, then the nav
+    // -- so closest to the rescue!
+    const siblings = link.closest('nav').querySelectorAll('.nav__link');
+    // const logo = document.querySelector('.nav__logo')
+    // a more robusr version of the logo selector
+    const logo = link.closest('.nav').querySelector('img');
+
+    // now time to change the opacity of those siblings
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = 0.5;
+    });
+    logo.style.opacity = 0.5;
+  }
+});
+
+nav.addEventListener('mouseout', function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    // select all the other sibliing links
+    // - note that each nav_link is inside a nav_item, then the nav
+    // -- so closest to the rescue!
+    const siblings = link.closest('nav').querySelectorAll('.nav__link');
+    // const logo = document.querySelector('.nav__logo')
+    // a more robusr version of the logo selector
+    const logo = link.closest('.nav').querySelector('img');
+
+    // now time to change the opacity of those siblings
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = 1;
+    });
+    logo.style.opacity = 1;
+  }
+});*/
+
+// 2ND TAKE - REFACTORED
+
+/*// REFACTORING - STEP 1 - CREATE A NEW FUNCTION
+// REFACTORING - STEP 2 - GO THROUGH THE FUNCTIONS, WHAT IS THE SAME v WHAT IS DIFFERENT
+// well... just the opacity really...
+const nav = document.querySelector('.nav');
+
+const handleHover = function (e, opacity) {
+  // no need for closest() because there are no child elements that we could accidently click in the link
+  // - so a simple check is enough
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    // select all the other sibliing links
+    // - note that each nav_link is inside a nav_item, then the nav
+    // -- so closest to the rescue!
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    // const logo = document.querySelector('.nav__logo')
+    // a more robusr version of the logo selector
+    const logo = link.closest('.nav').querySelector('img');
+
+    // now time to change the opacity of those siblings
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = opacity;
+    });
+    logo.style.opacity = opacity;
+  }
+};
+
+// mouseenter does not bubble, mouseover bubbles
+// we need the event to actually bubble
+
+// passing an argument to an event handler
+// these won't work...
+// nav.addEventListener('mouseover', handleHover());
+// nav.addEventListener('mouseout', handleHover());
+// javascript expects a 2nd argument to be a function, NOT the result of calling a function
+nav.addEventListener('mouseover', function (e) {
+  handleHover(e, 0.5);
+});
+nav.addEventListener('mouseout', function (e) {
+  handleHover(e, 1);
+});*/
+
+// FINAL TAKE
+/*const nav = document.querySelector('.nav');
+
+// It's impossible to pass an argument into an event handler function and can only have 1 really argument, the event!
+// if we want to pass additional values we have to use the THIS keyword
+// Multiple values would require us to pass them in as an array or an object
+const handleHover = function (e) {
+  console.log(this, e.currentTarget);
+  // no need for closest() because there are no child elements that we could accidently click in the link
+  // - so a simple check is enough
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    // select all the other sibliing links
+    // - note that each nav_link is inside a nav_item, then the nav
+    // -- so closest to the rescue!
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    // const logo = document.querySelector('.nav__logo')
+    // a more robusr version of the logo selector
+    const logo = link.closest('.nav').querySelector('img');
+
+    // now time to change the opacity of those siblings
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
+  }
+};
+
+// mouseenter does not bubble, mouseover bubbles
+// we need the event to actually bubble
+
+// passing an argument to an event handler
+// these won't work...
+// nav.addEventListener('mouseover', handleHover());
+// nav.addEventListener('mouseout', handleHover());
+// javascript expects a 2nd argument to be a function, NOT the result of calling a function
+
+// nav.addEventListener('mouseover', function (e) {
+//   handleHover(e, 0.5);
+// });
+// nav.addEventListener('mouseout', function (e) {
+//   handleHover(e, 1);
+// });
+
+// THE BIND METHOD
+// - the .bind() method creates a copy of the function that it was called on
+//   and it will set the THIS keyword in the function call, to whatever value we pass into .bind()
+
+// Passing "argument" into handler
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+nav.addEventListener('mouseout', handleHover.bind(1));*/
+
+///////////////////////////////////////
+//
+
+///////////////////////////////////////
+//
+
+///////////////////////////////////////
+//
+
+///////////////////////////////////////
+//
 
 ///////////////////////////////////////
 //
