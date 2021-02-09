@@ -80,6 +80,36 @@ tabsContainer.addEventListener('click', e => {
 });
 
 ///////////////////////////////////////
+// Reveal Sections on Scroll
+
+// we can apply this to all 4 sections
+
+const allSections = document.querySelectorAll('.section');
+
+// reveal function
+const revealSection = (entries, observer) => {
+  // use destructuring to get a single entry
+  const [entry] = entries;
+  console.log(entry);
+  // identify the target that scrolled into view
+  if (!entry.isIntersecting) return;
+
+  entry.target.classList.remove('section--hidden');
+  // unobserve so things aren't bouncing around forever
+  observer.unobserve(entry.target);
+};
+
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null, // usually we'll make root: null bc it's the viewport
+  threshold: 0.15, // when item is 15% visible in the viewport
+});
+
+allSections.forEach(section => {
+  sectionObserver.observe(section);
+  section.classList.add('section--hidden');
+});
+
+///////////////////////////////////////
 // Menu Fade Animation
 const nav = document.querySelector('.nav');
 
@@ -99,6 +129,50 @@ const handleHover = function (e) {
 
 nav.addEventListener('mouseover', handleHover.bind(0.5));
 nav.addEventListener('mouseout', handleHover.bind(1));
+
+////////////////////////////////////////////////
+// Sticky Navigation w/ Intersection Observer
+//!MUCH MORE PERFORMANT
+// - rootMargin is an important measure to mind as well
+// 0- get the target
+const header = document.querySelector('.header');
+// 0a- get header dimensions - better approach when considering responsive design
+const navHeight = nav.getBoundingClientRect().height;
+// console.log(navHeight);
+// 1- create observer
+// 3- configure callback for intersectionObserver
+const stickyNav = entries => {
+  const [entry] = entries; // same as const entry = entries[0]
+  // console.log(entry);
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null, // null = viewport
+  threshold: 0, // scrolls completely out of view, when 0% is visible
+  rootMargin: `-${navHeight}px`, // a box of 90 pixels applied outside of our element, in this case, 90px is the height of our navigation, so think of it as a header amount of space before the threshold was reached
+});
+// 2- make observer observe header
+headerObserver.observe(header);
+
+///////////////////////////////////////
+// Sticky Navigation
+
+//! Horrible for performance because this will shoot on every bit of scroll.
+// 1- we'll work with the scroll event first
+// - scroll happens on the window, not document
+// -- it fires on every bit of scroll and is considered inefficient and should be avoided
+/*const initialCoords = section1.getBoundingClientRect();
+console.log(initialCoords);
+
+window.addEventListener('scroll', function () {
+  // on scroll the event object is unneeded, useless...
+  // console.log(e);
+  console.log(window.scrollY); // difference between the top of the viewport, and top of the page
+  // when should navigation become sticky? first section!
+  if (window.scrollY > initialCoords.top) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+});*/
 
 ///////////////////////////////////////
 // SELECTING, CREATING, AND DELETING ELEMENTS
@@ -679,12 +753,66 @@ const handleHover = function (e) {
 nav.addEventListener('mouseover', handleHover.bind(0.5));
 nav.addEventListener('mouseout', handleHover.bind(1));*/
 
-///////////////////////////////////////
-//
+///////////////////////////////////////////////////////
+// IMPLEMENTING A STICK NAVIGATION: The Scroll Event
+// -- attach navigation to the top of the page when we scroll to a certain point
+// -- add a "sticky" class when the scroll reaches a certain position
+
+/////////////////////////////////////////////////
+// A Better Way: The Intersection Observer API - It's more efficient
+// - Observes changes to the way a certain raget element intersects another element or viewport.
+// 2 most important data points
+// - isIntersecting()
+// - intersectionRatio()
+
+// first thing, you have to create a new intersection observer
+// then pass in arguments
+// - callback function - will get called each time the target element intersects with the root element at a certain %
+// - entries = an array of the threshold entries
+/*const obsCallback = (entries, observer) => {
+  entries.forEach(entry => {
+    console.log(entry);
+  });
+};
+// - object of options
+const obsOptions = {
+  root: null, // the element the target is intersecting
+  threshold: [0, 0.2], // the %age of intersection at which the observer callback will be called, we can have multiples, it's like how much we want visible in the thing
+  // 0 will trigger every time it enters the view
+  // 1 will only trigger when the target is 100% in the view port
+
+};
+// store the observe in a function
+const observer = new IntersectionObserver(obsCallback, obsOptions);
+
+// use the observer to observer a target w/ (.observe())
+observer.observe(section1);*/
 
 ///////////////////////////////////////
-//
+// REVEALING ELEMENTS ON SCROLL
+// Goal is to reveal each section as you approach it
+// - get sections to slide in
+// - just adding a class because CSS will handle the animation
+// - as things move up they'll translateY to 0rem
 
+// All sections will have this class
+// .section--hidden {
+//   opacity: 0;
+//   transform: translateY(8rem);
+// }
+
+// All sections will have the class section--hidden added to them through JS
+// else we're looking at a user w/ JS disabled not seeing our sections
+
+// at the point the target is important
+// and we'll want to manipulate the class name
+
+// a first intersectionOberver is always called
+// - so the first entry won't trigger
+// -- so we'll set things to trigger when they are actually intersecting
+
+// make sure to unobserve so you don't have things perpetually bouncing around
+//
 ///////////////////////////////////////
 //
 
