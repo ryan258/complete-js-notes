@@ -1081,4 +1081,43 @@ observer.observe(section1);*/
 // - 1st slide @ 0%, then 100%, 200%, 300%, ...
 
 ///////////////////////////////////////
-//
+// LIFECYCLE DOM EVENTS
+
+// lifecycle of a page from user starting it to closing it
+
+//! DOMContentLoaded
+// In jQuery it's like document.ready, but not necessary in regular JS
+// - as soon as the HTML is completely parsed, downloaded and converted to the DOM tree
+// - all scripts must be downloaded and executed before dom content can happen
+// - but it doesn't wait for images and other external resources, just HTML and JS
+
+// here we can execute code that should run only after the dom is available
+// usually that's all of it, but we don't need to wrap our script in this because he use the HTML <script> tag which imports that HTML right at the end of the body. So the browser will find it at the end and all else is loaded before that.
+
+// so we can listen for this event
+
+/*document.addEventListener('DOMContentLoaded', e => {
+  console.log('HTML parsed and DOM tree built!', e);
+});
+
+//! LOAD EVENT
+// - fire not only when the html and js is parsed, but when the resources have all loaded as well
+// - when the complete page has finished loading, this event gets fired.
+window.addEventListener('load', e => {
+  console.log('load has fired!', e);
+});
+
+//! BEFORE UNLOAD
+// - happens immediately before a user leaves a page
+// -- like, when they click the close x on a browser tab
+// good for asking users if they are 100% sure they want to leave the page
+window.addEventListener('beforeunload', e => {
+  console.log('beforeunload has fired', e);
+  // some browsers you have to call preventDefault
+  e.preventDefault();
+  console.log(e);
+  e.returnValue = '';
+});*/
+
+///////////////////////////////////////////////
+// EFFICIENT SCRIPT LOADING: DEFER and ASYNC
