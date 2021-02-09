@@ -80,6 +80,191 @@ tabsContainer.addEventListener('click', e => {
 });
 
 ///////////////////////////////////////
+// SLIDER
+const slider = function () {
+  const slides = document.querySelectorAll('.slide');
+  const btnLeft = document.querySelector('.slider__btn--left');
+  const btnRight = document.querySelector('.slider__btn--right');
+  const dotContainer = document.querySelector('.dots');
+
+  let curSlide = 0;
+  const maxSlide = slides.length;
+
+  // Functions
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="dots__dot" data-slide="${i}"></button>`
+      );
+    });
+  };
+
+  const activateDot = function (slide) {
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active');
+  };
+
+  const goToSlide = function (slide) {
+    slides.forEach(
+      (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+    );
+  };
+
+  // Next slide
+  const nextSlide = function () {
+    if (curSlide === maxSlide - 1) {
+      curSlide = 0;
+    } else {
+      curSlide++;
+    }
+
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  const prevSlide = function () {
+    if (curSlide === 0) {
+      curSlide = maxSlide - 1;
+    } else {
+      curSlide--;
+    }
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  const init = function () {
+    goToSlide(0);
+    createDots();
+
+    activateDot(0);
+  };
+  init();
+
+  // Event handlers
+  btnRight.addEventListener('click', nextSlide);
+  btnLeft.addEventListener('click', prevSlide);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') prevSlide();
+    e.key === 'ArrowRight' && nextSlide();
+  });
+
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+      const { slide } = e.target.dataset;
+      goToSlide(slide);
+      activateDot(slide);
+    }
+  });
+};
+slider();
+///////////////////////////////////////
+// Slider
+// temporary styles to make dev easier
+// const slider = document.querySelector('.slider');
+// slider.style.transform = 'scale(0.3) translateX(-300px)';
+// slider.style.overflow = 'visible';
+/*
+//!!! Put Everything in a function as not to pollute the global
+// always start with those selections
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+const dotContainer = document.querySelector('.dots');
+
+let currentSlide = 0;
+const maxSlides = slides.length;
+
+//! FUNCTIONS
+// let's create the dots dynamically
+const createDots = () => {
+  slides.forEach((_, i) => {
+    dotContainer.insertAdjacentHTML(
+      'beforeend',
+      `<button class="dots__dot" data-slide="${i}"></button>`
+    );
+  });
+};
+
+const activateDot = slide => {
+  document
+    .querySelectorAll('.dots__dot')
+    .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+  document
+    .querySelector(`.dots__dot[data-slide="${slide}"]`)
+    .classList.add('dots__dot--active');
+};
+
+// do a slide function
+const goToSlide = slide => {
+  slides.forEach((s, i) => {
+    s.style.transform = `translateX(${100 * (i - slide)}%)`;
+  });
+};
+
+// immediately go to current slide 0 when the page loads
+
+// Next Slide
+const nextSlide = () => {
+  if (currentSlide === maxSlides - 1) {
+    currentSlide = 0;
+  } else {
+    currentSlide++;
+  }
+
+  goToSlide(currentSlide);
+  activateDot(currentSlide);
+};
+
+// Previous Slide
+const prevSlide = () => {
+  if (currentSlide === 0) {
+    currentSlide = maxSlides - 1;
+  } else {
+    currentSlide--;
+  }
+
+  goToSlide(currentSlide);
+  activateDot(currentSlide);
+};
+//!
+const init = () => {
+  goToSlide(0);
+  createDots();
+
+  activateDot(0);
+};
+
+//! EVENT HANDLERS
+// slider arrow clicks
+btnRight.addEventListener('click', nextSlide);
+btnLeft.addEventListener('click', prevSlide);
+// keyboard slider nav
+document.addEventListener('keydown', e => {
+  console.log(e);
+  if (e.key === 'ArrowLeft') prevSlide();
+  // if (e.key === 'ArrowRight') nextSlide();
+  // or we can do it with short circuiting
+  e.key === 'ArrowRight' && nextSlide();
+});
+
+// make dots navigable with EVENT DELEGATION!
+dotContainer.addEventListener('click', e => {
+  if (e.target.classList.contains('dots__dot')) {
+    // console.log('Monster DOT!');
+    const { slide } = e.target.dataset;
+    goToSlide(slide);
+    activateDot(slide);
+  }
+});*/
+///////////////////////////////////////
 // Lazy Loading
 
 // select lazy images
@@ -884,8 +1069,16 @@ observer.observe(section1);*/
 
 // when lazy loading loads the new img it emits an event and we should listen for that event to trigger removal of the class that is providing the blur
 
-///////////////////////////////////////
-//
+/////////////////////////////////
+// BUILDING A SLIDER COMPONENT
+
+// In the slider component we have
+// - .slider - the container component
+// -- .slide - individual slide
+//    they are all side by side and we use translateX to move them
+//! mainly we'll be adjusting the translateX %ages
+// so initially we want
+// - 1st slide @ 0%, then 100%, 200%, 300%, ...
 
 ///////////////////////////////////////
 //
