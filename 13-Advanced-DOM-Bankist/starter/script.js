@@ -80,6 +80,49 @@ tabsContainer.addEventListener('click', e => {
 });
 
 ///////////////////////////////////////
+// Lazy Loading
+
+// select lazy images
+const imgTargets = document.querySelectorAll('img[data-src');
+// console.log(imgTargets);
+
+// const loadImg = (entries, observer) => {
+//   const [entry] = entries;
+//   console.log(entry);
+
+//   if (!entry.isIntersecting) return;
+
+//   // replace src w/ data-src
+//   entry.target.src = entry.target.dataset.src;
+//   // on switch/loading of a new image an event will be emitted
+//   // so use an event listener to catch these change to remove the blur class
+//   entry.target.addEventListener('load', () => {
+//     entry.target.classList.remove('lazy-img');
+//   });
+
+//   observer.unobserve(entry.target);
+// };
+
+// an approach for multiple images in view
+const loadImg = (entries, observer) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.src = entry.target.dataset.src;
+    entry.target.addEventListener('load', () => {
+      entry.target.classList.remove('lazy-img');
+    });
+  });
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px', // load 200px before they reach the viewport
+});
+
+imgTargets.forEach(img => imgObserver.observe(img));
+
+///////////////////////////////////////
 // Reveal Sections on Scroll
 
 // we can apply this to all 4 sections
@@ -90,7 +133,7 @@ const allSections = document.querySelectorAll('.section');
 const revealSection = (entries, observer) => {
   // use destructuring to get a single entry
   const [entry] = entries;
-  console.log(entry);
+  // console.log(entry);
   // identify the target that scrolled into view
   if (!entry.isIntersecting) return;
 
@@ -812,9 +855,34 @@ observer.observe(section1);*/
 // -- so we'll set things to trigger when they are actually intersecting
 
 // make sure to unobserve so you don't have things perpetually bouncing around
-//
+
 ///////////////////////////////////////
-//
+// LAZY LOADING IMAGES
+// - Images take up the bulk of web page weight so they're important to optimize.
+// - lazy loading can be a good strategy, so here's that
+// -- as we approach the image it will begin to load
+// the main ingredient is that we have a really low res img that we load at the beginning - or really small and stretched out (src="img/card-lazy.jpg")
+// then we reference the full img in the data-src (data-src="img/card.jpg")
+// - we'll also have a class that makes the img blurred (class="features__img lazy-img")
+
+// Here's the html
+{
+  /* <img
+  src="img/card-lazy.jpg"
+  data-src="img/card.jpg"
+  alt="Credit card"
+  class="features__img lazy-img"
+/> */
+}
+
+// The CSS
+// .lazy-img {
+//   filter: blur(20px);
+// }
+
+// remember that the sections are already shifted 8rem down for the reveal feature
+
+// when lazy loading loads the new img it emits an event and we should listen for that event to trigger removal of the class that is providing the blur
 
 ///////////////////////////////////////
 //
