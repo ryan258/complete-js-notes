@@ -19,7 +19,28 @@ if (navigator.geolocation) {
       const { latitude } = position.coords;
       const { longitude } = position.coords;
       // console.log(`Lat: ${latitude}\nLong: ${longitude}`);
-      console.log(`https://www.google.com/maps/@${latitude},${longitude}z`);
+      // console.log(`https://www.google.com/maps/@${latitude},${longitude}z`);
+
+      const coords = [latitude, longitude];
+
+      // L.map()
+      // L = main leaflet entry point
+      console.log(L);
+      // - .map(xxx) = xxx = id of element you want to put the map
+      // const map = L.map('map').setView([51.505, -0.09], 13);
+      const map = L.map('map').setView(coords, 13);
+      // the map is made up of small tiles - from open street map
+      // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      // L.marker([51.5, -0.09])
+      L.marker(coords)
+        .addTo(map)
+        .bindPopup('A pretty CSS3 popup.<br> Easily customizable.<br>👻')
+        .openPopup();
     },
     function () {
       alert('Could not get your position.');
