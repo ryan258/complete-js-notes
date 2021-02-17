@@ -29,6 +29,7 @@ if (navigator.geolocation) {
       // - .map(xxx) = xxx = id of element you want to put the map
       // const map = L.map('map').setView([51.505, -0.09], 13);
       const map = L.map('map').setView(coords, 13);
+      console.log(map);
       // the map is made up of small tiles - from open street map
       // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
@@ -36,11 +37,27 @@ if (navigator.geolocation) {
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      // L.marker([51.5, -0.09])
-      L.marker(coords)
-        .addTo(map)
-        .bindPopup('A pretty CSS3 popup.<br> Easily customizable.<br>👻')
-        .openPopup();
+      // this .on() is coming from the leaflet library
+      map.on('click', function (mapEvent) {
+        console.log(mapEvent);
+        const { lat, lng } = mapEvent.latlng;
+
+        // L.marker([51.5, -0.09])
+        // L.marker([lat, lng]).addTo(map).bindPopup('👻 👻 👻').openPopup();
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+              maxWidth: 250,
+              minWidth: 100,
+              autoClose: false,
+              closeOnClick: false,
+              className: 'running-popup',
+            })
+          )
+          .setPopupContent('👻🔥 EXERCISE 🔥👻')
+          .openPopup();
+      });
     },
     function () {
       alert('Could not get your position.');
