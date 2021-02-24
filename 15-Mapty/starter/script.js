@@ -5,6 +5,7 @@ class Workout {
   // any object should have a uid
   //! - usually we would use a library to create unique id's and never create UIDs on our own
   id = (Date.now() + '').slice(-10);
+  clicks = 0;
   // takes in data that is relavent to both workouts
   constructor(coords, distance, duration) {
     // this.date = ... // old way to do it
@@ -21,6 +22,10 @@ class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
+  }
+  // give this method to every workout
+  click() {
+    this.clicks++;
   }
 }
 // but we'll never directly create a Workout object, it will either be a running or cycling object.
@@ -300,6 +305,8 @@ class App {
         duration: 1,
       },
     });
+    // use the public interface
+    workout.click();
   }
 }
 
