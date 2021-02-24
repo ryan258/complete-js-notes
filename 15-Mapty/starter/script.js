@@ -11,6 +11,56 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+class Workout {
+  date = new Date();
+  // any object should have a uid
+  //! - usually we would use a library to create unique id's and never create UIDs on our own
+  id = (Date.now() + '').slice(-10);
+  // takes in data that is relavent to both workouts
+  constructor(coords, distance, duration) {
+    // this.date = ... // old way to do it
+    // this.id = ...   // old way to do it
+    this.coords = coords; // [lat, lng]
+    this.distance = distance; // kms
+    this.duration = duration; // mins
+  }
+}
+// but we'll never directly create a Workout object, it will either be a running or cycling object.
+
+class Running extends Workout {
+  constructor(coords, distance, duration, cadence) {
+    super(coords, distance, duration);
+    this.cadence = cadence;
+    //! Remember: We can call any code in the constructor
+    this.calcPace();
+  }
+
+  calcPace() {
+    // min/km
+    this.pace = this.duration / this.distance;
+    return this.pace;
+  }
+}
+class Cycling extends Workout {
+  constructor(coords, distance, duration, elevationGain) {
+    super(coords, distance, duration);
+    this.elevationGain = elevationGain;
+    this.calcSpeed();
+  }
+
+  calcSpeed() {
+    // km/hr
+    this.speed = this.distance / (this.duration / 60);
+    return this.speed;
+  }
+}
+
+const run1 = new Running([36, -94], 5, 25, 175);
+const cycle1 = new Cycling([36.15, -94], 15, 125, 1175);
+console.log(run1, cycle1);
+
+//////////////////////////////
+// APPLICATION ARCHITECTURE
 class App {
   #map;
   #mapEvent;
