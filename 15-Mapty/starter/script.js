@@ -74,6 +74,7 @@ const inputElevation = document.querySelector('.form__input--elevation');
 class App {
   #map;
   #mapEvent;
+  #mapZoomLevel = 13;
   #workouts = [];
   // this constructor method is called immediately when a new instance is created from this class
   constructor() {
@@ -82,6 +83,7 @@ class App {
     // we can also attach our event handlers to the new instance in the constructor too!
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
+    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
 
   _getPosition() {
@@ -112,7 +114,7 @@ class App {
     // Error: ... cannot set property '#map' of undefined
     // - something must be wrong with the 'this' keyword
     console.log(this); // undefined, because _loadMap() is being called by _getPosition as .getCurrentPosition's callback function and is called as a regular function call, which sets 'this' to undefined.
-    this.#map = L.map('map').setView(coords, 13);
+    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
     // console.log(map);
     // the map is made up of small tiles - from open street map
     // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -280,6 +282,24 @@ class App {
     `;
     }
     form.insertAdjacentHTML('afterend', html);
+  }
+  _moveToPopup(e) {
+    // e.target = the element that was actually clicked
+    const workoutEl = e.target.closest('.workout');
+    console.log(workoutEl);
+
+    if (!workoutEl) return; // guard clause!
+
+    const workout = this.#workouts.find(
+      work => work.id === workoutEl.dataset.id
+    );
+    console.log(workout);
+    this.#map.setView(workout.coords, this.#mapZoomLevel, {
+      animate: true,
+      pan: {
+        duration: 1,
+      },
+    });
   }
 }
 
