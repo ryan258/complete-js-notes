@@ -84,8 +84,11 @@ class App {
   // this constructor method is called immediately when a new instance is created from this class
   constructor() {
     // so we can just keep things tidy by getting the position in the constructor
+    // GET USER'S POSITION
     this._getPosition();
-    // we can also attach our event handlers to the new instance in the constructor too!
+    // GET DATA FROM LOCAL STORAGE
+    this._getLocalStorage();
+    // ATTACH EVENT HANDLERS to the new instance in the constructor too!
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
@@ -114,11 +117,11 @@ class App {
 
     const coords = [latitude, longitude];
 
-    console.log(L);
+    // console.log(L);
     // const map = L.map('map').setView([51.505, -0.09], 13);
     // Error: ... cannot set property '#map' of undefined
     // - something must be wrong with the 'this' keyword
-    console.log(this); // undefined, because _loadMap() is being called by _getPosition as .getCurrentPosition's callback function and is called as a regular function call, which sets 'this' to undefined.
+    // console.log(this); // undefined, because _loadMap() is being called by _getPosition as .getCurrentPosition's callback function and is called as a regular function call, which sets 'this' to undefined.
     this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
     // console.log(map);
     // the map is made up of small tiles - from open street map
@@ -131,6 +134,12 @@ class App {
     // this .on() is coming from the leaflet library
     //! Handle clicks on map
     this.#map.on('click', this._showForm.bind(this));
+
+    this.#workouts.forEach(work => {
+      // this._renderWorkout(work);
+      // render markers once map is loaded
+      this._renderWorkoutMarker(work);
+    });
   }
 
   _showForm(mapE) {
@@ -204,7 +213,7 @@ class App {
     }
     // Add new object to workout array
     this.#workouts.push(workout);
-    console.log(workout);
+    // console.log(workout);
 
     // Render workout on map as a marker
     this._renderWorkoutMarker(workout);
@@ -213,6 +222,9 @@ class App {
 
     // Hide form & Clear Input Fields
     this._hideForm();
+
+    // Set local storage to all workouts
+    this._setLocalStorage();
   }
 
   _renderWorkoutMarker(workout) {
@@ -291,14 +303,14 @@ class App {
   _moveToPopup(e) {
     // e.target = the element that was actually clicked
     const workoutEl = e.target.closest('.workout');
-    console.log(workoutEl);
+    // console.log(workoutEl);
 
     if (!workoutEl) return; // guard clause!
 
     const workout = this.#workouts.find(
       work => work.id === workoutEl.dataset.id
     );
-    console.log(workout);
+    // console.log(workout);
     this.#map.setView(workout.coords, this.#mapZoomLevel, {
       animate: true,
       pan: {
@@ -306,7 +318,28 @@ class App {
       },
     });
     // use the public interface
-    workout.click();
+    // workout.click(); - when we reload the objects out of local storage we break the prototype chain, and lose this .click() method... we'll address this later
+    //! lesson - objects coming out of local storage won't inherit all the methods they had before.
+  }
+  _setLocalStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+    // console.log(data);
+
+    if (!data) return;
+    // restore the workout data on reload
+    this.#workouts = data;
+    // render workouts we got from localStorage
+    this.#workouts.forEach(work => {
+      this._renderWorkout(work);
+      // this._renderWorkoutMarker(work)
+    });
+  }
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
   }
 }
 
